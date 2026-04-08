@@ -15,10 +15,10 @@ const stravaWebhookVerificationQuerySchema = z.object({
 });
 
 const stravaWebhookEventPayloadSchema = z.object({
-  aspect_type: z.enum(["create", "update", "delete"]),
+  aspect_type: z.string().trim().min(1),
   event_time: z.number().int().positive(),
   object_id: z.number().int().positive(),
-  object_type: z.enum(["activity", "athlete"]),
+  object_type: z.string().trim().min(1),
   owner_id: z.number().int().positive().optional(),
   subscription_id: z.number().int().positive(),
   updates: z.record(z.string(), z.unknown()).optional().nullable(),
@@ -39,6 +39,7 @@ type StravaWebhookProcessingState =
       failureReason:
         | "missing_owner_id"
         | "owner_not_connected"
+        | "unsupported_event"
         | "unsupported_athlete_event";
       processedAt: Date;
     };
@@ -66,6 +67,13 @@ function isAthleteDeauthorizationEvent(payload: StravaWebhookEventPayload) {
   const authorized = payload.updates?.authorized;
 
   return authorized === false || authorized === "false";
+}
+
+function isSupportedActivityEvent(payload: StravaWebhookEventPayload) {
+  return (
+    payload.object_type === "activity" &&
+    ["create", "update", "delete"].includes(payload.aspect_type)
+  );
 }
 
 /** Validates the Strava subscription verification query without exposing the shared secret in any response path. */
@@ -129,7 +137,7 @@ export function resolveStravaWebhookProcessingState(params: {
   }
 
   if (
-    params.payload.object_type === "activity" ||
+    isSupportedActivityEvent(params.payload) ||
     isAthleteDeauthorizationEvent(params.payload)
   ) {
     return {
@@ -138,6 +146,16 @@ export function resolveStravaWebhookProcessingState(params: {
       stravaConnectionId: params.connection.id,
       failureReason: null,
       processedAt: null,
+    };
+  }
+
+  if (params.payload.object_type !== "athlete") {
+    return {
+      processingStatus: "ignored",
+      ownerId: params.connection.ownerId,
+      stravaConnectionId: params.connection.id,
+      failureReason: "unsupported_event",
+      processedAt: now,
     };
   }
 

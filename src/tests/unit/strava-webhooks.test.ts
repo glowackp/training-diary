@@ -180,4 +180,37 @@ describe("Strava webhook helpers", () => {
       processedAt: now,
     });
   });
+
+  it("stores unsupported but parseable event types as ignored trace records", () => {
+    const parsedPayload = parseStravaWebhookEventPayload({
+      aspect_type: "custom",
+      event_time: 1_900_000_000,
+      object_id: 999,
+      object_type: "gear",
+      owner_id: 456,
+      subscription_id: 789,
+    });
+
+    if (!parsedPayload.success) {
+      throw new Error("Expected unsupported payload to remain parseable for traceability.");
+    }
+
+    const now = new Date("2026-04-08T12:00:00.000Z");
+    const result = resolveStravaWebhookProcessingState({
+      connection: {
+        id: "connection-id",
+        ownerId: "local-default",
+      },
+      payload: parsedPayload.data,
+      now,
+    });
+
+    expect(result).toEqual({
+      processingStatus: "ignored",
+      ownerId: "local-default",
+      stravaConnectionId: "connection-id",
+      failureReason: "unsupported_event",
+      processedAt: now,
+    });
+  });
 });
