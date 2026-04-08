@@ -1,13 +1,11 @@
-import type { SaveUploadInput } from "@/lib/storage/local";
+import type { SaveUploadInput, StorageAdapter, StoredUpload } from "@/lib/storage/types";
 
 /** Marks the Azure blob adapter as intentionally unimplemented during local-first setup. */
-export class AzureBlobStorageAdapter {
-  async saveUpload(
-    input: SaveUploadInput,
-  ): Promise<{
-    path: string;
-  }> {
+export class AzureBlobStorageAdapter implements StorageAdapter {
+  async saveUpload(input: SaveUploadInput): Promise<StoredUpload> {
     void input;
-    throw new Error("Azure Blob Storage is not configured during Phase 0.");
+    throw new Error(
+      "Azure Blob Storage remains behind an interface and is not implemented for local-first development yet.",
+    );
   }
 }

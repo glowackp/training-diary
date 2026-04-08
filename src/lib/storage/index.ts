@@ -1,12 +1,7 @@
-import { getServerEnv } from "@/lib/config/env";
+import { getServerConfig } from "@/lib/config/env";
 import { AzureBlobStorageAdapter } from "@/lib/storage/azure-blob";
-import { LocalStorageAdapter, type SaveUploadInput } from "@/lib/storage/local";
-
-export type StorageAdapter = {
-  saveUpload(input: SaveUploadInput): Promise<{
-    path: string;
-  }>;
-};
+import { LocalStorageAdapter } from "@/lib/storage/local";
+import type { StorageAdapter } from "@/lib/storage/types";
 
 let storageAdapter: StorageAdapter | undefined;
 
@@ -16,14 +11,19 @@ export function getStorageAdapter(): StorageAdapter {
     return storageAdapter;
   }
 
-  const env = getServerEnv();
+  const config = getServerConfig();
 
   const resolvedAdapter: StorageAdapter =
-    env.STORAGE_DRIVER === "azure"
+    config.storage.driver === "azure"
       ? new AzureBlobStorageAdapter()
-      : new LocalStorageAdapter(env.LOCAL_UPLOAD_DIR);
+      : new LocalStorageAdapter(config.storage.localUploadDirectory);
 
   storageAdapter = resolvedAdapter;
 
   return resolvedAdapter;
+}
+
+/** Clears the memoized adapter so tests can swap config safely between cases. */
+export function resetStorageAdapterForTests() {
+  storageAdapter = undefined;
 }

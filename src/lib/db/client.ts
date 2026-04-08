@@ -1,21 +1,21 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
-import { getServerEnv } from "@/lib/config/env";
+import { getServerConfig } from "@/lib/config/env";
 
 type GlobalDatabase = typeof globalThis & {
   trainingDiaryPool?: Pool;
 };
 
 const globalDatabase = globalThis as GlobalDatabase;
-const env = getServerEnv();
+const config = getServerConfig();
 
 const pool =
   globalDatabase.trainingDiaryPool ??
   new Pool({
-    connectionString: env.DATABASE_URL,
+    connectionString: config.database.url,
   });
 
-if (env.NODE_ENV !== "production") {
+if (config.nodeEnv !== "production") {
   globalDatabase.trainingDiaryPool = pool;
 }
 

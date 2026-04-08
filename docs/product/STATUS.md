@@ -1,15 +1,19 @@
 # Project Status
 
 ## Current Phase
-Phase 1 / Task 1 completed
+Phase 1 / Task 2 completed
 
 ## Last Completed
 - Phase 0 / Task 0 completed
 - Phase 1 / Task 1 completed
+- Phase 1 / Task 2 completed
 - Initial database schema and migrations added
 - Security review completed
 - Dedupe/idempotency integrity tightened for source-linked records
 - token_encryption_key_version added for Strava token rotation safety
+- server env validation and normalized config layer added
+- owner-scoped repository helpers and typed activity domain mapping added
+- local storage adapter now persists relative owner-scoped upload keys
 
 ## Current Branch
 - main
@@ -38,16 +42,14 @@ Phase 1 / Task 1 completed
 - For webhook flows, resolve owner only from Strava connection or athlete mapping
 
 ## Next Exact Step
-Execute Phase 1 / Task 2:
-- env validation cleanup
-- config layer cleanup
-- typed domain models
-- DB query layer cleanup
-- local storage adapter cleanup
-- encode owner-boundary write discipline into repository/service helpers where appropriate
+Execute Phase 1 / Task 3:
+- replace the placeholder health endpoint with a real local readiness check
+- add a safe local seed script for demo data and owner-scoped records
+- expand local development docs for env setup, DB lifecycle, and verification commands
 
 ## Open Questions
-- none blocking Task 2
+- confirm the demo seed owner id and whether seed data should include a placeholder Strava connection row
+- confirm whether the health endpoint should remain lightweight or include an actual database ping in local development
 
 ## Blockers
 - none
