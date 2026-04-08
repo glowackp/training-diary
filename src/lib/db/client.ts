@@ -21,3 +21,9 @@ if (config.nodeEnv !== "production") {
 
 /** Exposes the shared Drizzle client used by future queries and route handlers. */
 export const db = drizzle(pool);
+
+/** Closes the shared pool so scripts can exit cleanly after one-off DB work. */
+export async function closeDatabasePool() {
+  await pool.end();
+  globalDatabase.trainingDiaryPool = undefined;
+}

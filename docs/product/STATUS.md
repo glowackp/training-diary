@@ -1,19 +1,22 @@
 # Project Status
 
 ## Current Phase
-Phase 1 / Task 2 completed
+Phase 1 / Task 3 completed
 
 ## Last Completed
 - Phase 0 / Task 0 completed
 - Phase 1 / Task 1 completed
 - Phase 1 / Task 2 completed
+- Phase 1 / Task 3 completed
 - Initial database schema and migrations added
 - Security review completed
 - Dedupe/idempotency integrity tightened for source-linked records
-- token_encryption_key_version added for Strava token rotation safety
+- `token_encryption_key_version` added for Strava token rotation safety
 - server env validation and normalized config layer added
 - owner-scoped repository helpers and typed activity domain mapping added
-- local storage adapter now persists relative owner-scoped upload keys
+- local storage adapter now persists owner-scoped relative storage keys
+- local demo seed script added for owner `local-default`
+- local docs and workflow updated around `db:migrate`, `db:seed`, `db:setup`, and lightweight health verification
 
 ## Current Branch
 - main
@@ -33,7 +36,8 @@ Phase 1 / Task 2 completed
 - one personal comment per activity
 - activity_streams stored as jsonb by (activity_id, stream_type)
 - strict dedupe for uploads and source activity ids
-- seed owner id locked to local-default
+- seed/demo owner_id is `local-default`
+- do not create a placeholder `strava_connections` seed row yet
 - health endpoint stays lightweight for now
 
 ## Application Safety Rules
@@ -44,14 +48,13 @@ Phase 1 / Task 2 completed
 - For webhook flows, resolve owner only from Strava connection or athlete mapping
 
 ## Next Exact Step
-Execute Phase 1 / Task 3:
-- replace the placeholder health endpoint with a real local readiness check
-- add a safe local seed script for demo data and owner-scoped records
-- expand local development docs for env setup, DB lifecycle, and verification commands
+Execute Phase 2 / Task 4:
+- begin Strava auth foundation work
+- keep token exchange and refresh strictly server-side
+- build on the existing token storage, dedupe rules, and owner-boundary helpers
 
 ## Open Questions
-- confirm the demo seed owner id and whether seed data should include a placeholder Strava connection row
-- confirm whether the health endpoint should remain lightweight or include an actual database ping in local development
+- none blocking Phase 2 / Task 4
 
 ## Blockers
 - none
