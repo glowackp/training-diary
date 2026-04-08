@@ -10,6 +10,8 @@ Phase 2 / Task 5 completed
 - First authenticated Strava read path added through a minimal probe endpoint
 - Accepted Strava scopes are now normalized, validated, persisted, and checked before reads
 - Strava status endpoint now reports activity-read readiness without exposing sensitive internals
+- Task 5 security review completed
+- Probe endpoint hardened to reduce data exposure
 
 ## Current Branch
 - main
