@@ -7,13 +7,9 @@ Phase 1 / Task 1 completed
 - Phase 0 / Task 0 completed
 - Phase 1 / Task 1 completed
 - Initial database schema and migrations added
-- Drizzle schema modules created for activities, Strava connections, imports, streams, webhook events, comments, and daily stats
-- Initial migration generated
-- Follow-up migrations generated for comment uniqueness and schema integrity checks
-- Schema smoke test added
-- QA-style schema review completed
-- Integration/Security review completed
-- README and CHANGELOG updated
+- Security review completed
+- Dedupe/idempotency integrity tightened for source-linked records
+- token_encryption_key_version added for Strava token rotation safety
 
 ## Current Branch
 - main
@@ -34,18 +30,24 @@ Phase 1 / Task 1 completed
 - activity_streams stored as jsonb by (activity_id, stream_type)
 - strict dedupe for uploads and source activity ids
 
+## Application Safety Rules
+- Never accept owner_id from the client for child records
+- Resolve owner_id server-side from the parent row
+- Scope updates by both id and owner_id
+- Use transactions for multi-step ingest flows
+- For webhook flows, resolve owner only from Strava connection or athlete mapping
+
 ## Next Exact Step
-Proceed to Phase 1 / Task 2.
-Use the current schema constraints and dedupe rules as the baseline for the first ingestion flow.
+Execute Phase 1 / Task 2:
+- env validation cleanup
+- config layer cleanup
+- typed domain models
+- DB query layer cleanup
+- local storage adapter cleanup
+- encode owner-boundary write discipline into repository/service helpers where appropriate
 
 ## Open Questions
-- Child tables still rely on application code to keep `owner_id` aligned with the parent row. This is acceptable for now, but Task 2 write paths should preserve that boundary explicitly.
+- none blocking Task 2
 
 ## Blockers
 - none
-
-## Notes for Resume
-When resuming, read:
-1. `AGENTS.md`
-2. `docs/product/codex-kickoff-pack.md`
-3. `docs/product/STATUS.md`
