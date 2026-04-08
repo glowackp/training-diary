@@ -1,6 +1,8 @@
 import { z } from "zod";
 
+const stravaClientIdSchema = z.string().trim().regex(/^\d+$/).optional();
 const optionalSecretSchema = z.string().trim().min(1).optional();
+const optionalEncryptionKeySchema = z.string().trim().min(32).optional();
 
 const serverEnvSchema = z
   .object({
@@ -12,14 +14,15 @@ const serverEnvSchema = z
     APP_BASE_URL: z.string().url().default("http://localhost:3000"),
     STORAGE_DRIVER: z.enum(["local", "azure"]).default("local"),
     LOCAL_UPLOAD_DIR: z.string().trim().min(1).default(".local/uploads"),
-    STRAVA_CLIENT_ID: optionalSecretSchema,
+    STRAVA_CLIENT_ID: stravaClientIdSchema,
     STRAVA_CLIENT_SECRET: optionalSecretSchema,
     STRAVA_WEBHOOK_VERIFY_TOKEN: optionalSecretSchema,
-    STRAVA_ENCRYPTION_KEY: optionalSecretSchema,
+    STRAVA_ENCRYPTION_KEY: optionalEncryptionKeySchema,
   })
   .superRefine((env, context) => {
     const hasClientId = Boolean(env.STRAVA_CLIENT_ID);
     const hasClientSecret = Boolean(env.STRAVA_CLIENT_SECRET);
+    const hasEncryptionKey = Boolean(env.STRAVA_ENCRYPTION_KEY);
 
     // Keep the OAuth placeholder config coherent so later phases do not run with half-configured secrets.
     if (hasClientId !== hasClientSecret) {
@@ -27,6 +30,16 @@ const serverEnvSchema = z
         code: z.ZodIssueCode.custom,
         path: hasClientId ? ["STRAVA_CLIENT_SECRET"] : ["STRAVA_CLIENT_ID"],
         message: "STRAVA_CLIENT_ID and STRAVA_CLIENT_SECRET must be set together.",
+      });
+    }
+
+    // Fail closed for Strava auth so token persistence cannot run without an encryption key.
+    if (hasClientId && hasClientSecret && !hasEncryptionKey) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["STRAVA_ENCRYPTION_KEY"],
+        message:
+          "STRAVA_ENCRYPTION_KEY is required when Strava OAuth credentials are configured.",
       });
     }
   });
@@ -80,6 +93,11 @@ function buildServerConfig(env: ServerEnv) {
       webhookVerifyToken: env.STRAVA_WEBHOOK_VERIFY_TOKEN ?? null,
       encryptionKey: env.STRAVA_ENCRYPTION_KEY ?? null,
       isConfigured: Boolean(env.STRAVA_CLIENT_ID && env.STRAVA_CLIENT_SECRET),
+      isReady: Boolean(
+        env.STRAVA_CLIENT_ID &&
+          env.STRAVA_CLIENT_SECRET &&
+          env.STRAVA_ENCRYPTION_KEY,
+      ),
     },
   } as const;
 }

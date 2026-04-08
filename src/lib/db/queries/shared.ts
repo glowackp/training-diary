@@ -11,6 +11,8 @@ type OwnedEntityTable = OwnerScopedTable & {
   id: PgColumn;
 };
 
+export type ReadExecutor = Pick<typeof db, "select">;
+
 /** Caps query limits so future route handlers do not accidentally request unbounded result sets. */
 export function normalizeLimit(
   limit: number | undefined,

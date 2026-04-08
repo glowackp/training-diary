@@ -5,11 +5,10 @@ Current version: `0.1.0-dev`
 The canonical app version is stored in `package.json` and displayed in the app shell.
 
 ## Current status
-Phase 2 / Task 4 is the current focus. Phase 1 / Task 3 is complete, so the
-app now has validated server config, a typed repository foundation for
-owner-scoped data access, local demo seeding for the locked `local-default`
-owner, and a clearer local bootstrap workflow that keeps Azure optional while
-Strava auth/connect/callback/status work begins next.
+Phase 2 / Task 4 is complete. The app now has the first secure Strava auth
+slice in place: server-side connect/callback/status routes, strict OAuth state
+validation, encrypted token persistence for the locked `local-default` owner,
+and a local-first setup path that still works without Azure.
 
 ## What the app does
 - recent training feed
@@ -28,7 +27,7 @@ The local runtime does not require Azure. Development uses:
 - Next.js with the `src/` app router layout
 - PostgreSQL via Docker Compose
 - local filesystem storage for uploads
-- server-only Strava placeholder routes
+- server-only Strava auth routes
 
 ## Key commands
 - `npm install`
@@ -56,6 +55,8 @@ The local runtime does not require Azure. Development uses:
 development continues to default to `STORAGE_DRIVER=local` with filesystem
 storage under `LOCAL_UPLOAD_DIR`. Local bootstrap uses the fixed demo owner
 `local-default` and does not create a placeholder Strava connection row.
+`STRAVA_ENCRYPTION_KEY` is mandatory for Strava auth readiness and must be set
+before `/api/strava/connect` can succeed.
 
 ## Latest notable changes
 - Added the initial Next.js 15 project skeleton under `src/`.
@@ -68,6 +69,7 @@ storage under `LOCAL_UPLOAD_DIR`. Local bootstrap uses the fixed demo owner
 - Updated local upload storage to persist owner-scoped relative storage keys while keeping Azure behind an interface.
 - Added a local seed script plus `db:setup` workflow to bootstrap feed/detail/stats demo data for owner `local-default`.
 - Expanded local development docs and lightweight health output to make local setup clearer without turning health into a mandatory DB ping.
+- Added the first Strava authentication slice with secure connect/callback/status routes, encrypted token persistence, athlete locking, and signed OAuth state validation.
 
 ## Full change history
 See `CHANGELOG.md`.

@@ -24,9 +24,18 @@ describe("server config", () => {
   it("rejects half-configured Strava OAuth credentials", () => {
     expect(() =>
       parseServerEnv({
-        STRAVA_CLIENT_ID: "client-id-only",
+        STRAVA_CLIENT_ID: "12345",
       }),
     ).toThrow(/must be set together/);
+  });
+
+  it("rejects configured Strava auth without an encryption key", () => {
+    expect(() =>
+      parseServerEnv({
+        STRAVA_CLIENT_ID: "12345",
+        STRAVA_CLIENT_SECRET: "client-secret",
+      }),
+    ).toThrow(/STRAVA_ENCRYPTION_KEY/);
   });
 
   it("builds normalized runtime config from validated env", () => {
@@ -37,8 +46,9 @@ describe("server config", () => {
       APP_BASE_URL: "http://localhost:3001",
       STORAGE_DRIVER: "local",
       LOCAL_UPLOAD_DIR: ".tmp/uploads",
-      STRAVA_CLIENT_ID: "client-id",
+      STRAVA_CLIENT_ID: "12345",
       STRAVA_CLIENT_SECRET: "client-secret",
+      STRAVA_ENCRYPTION_KEY: "12345678901234567890123456789012",
     };
 
     resetServerConfigForTests();
@@ -56,7 +66,9 @@ describe("server config", () => {
         localUploadDirectory: ".tmp/uploads",
       },
       strava: {
+        clientId: "12345",
         isConfigured: true,
+        isReady: true,
       },
     });
   });
