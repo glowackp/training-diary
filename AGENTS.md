@@ -119,3 +119,12 @@ When asked to work on a task:
 3. Execute only the requested task or phase.
 4. Keep the result scoped.
 5. Report what changed, what was validated, and any remaining gap.
+
+## Working State File
+Use `docs/product/STATUS.md` as the current execution state file.
+Rules:
+- read `docs/product/STATUS.md` before starting a task
+- treat `Next Exact Step` as the default continuation point unless the user explicitly overrides it
+- after completing a meaningful task, update `docs/product/STATUS.md`
+- keep STATUS focused on current state, next step, blockers, and open questions
+- do not use STATUS as a replacement for README or CHANGELOG
