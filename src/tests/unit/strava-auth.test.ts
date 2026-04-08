@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import {
   buildStravaAuthorizeUrl,
   hasRequiredStravaScopes,
+  normalizeStravaScopes,
 } from "@/lib/strava/oauth";
 import {
   createStravaOAuthState,
@@ -59,7 +60,7 @@ describe("Strava auth helpers", () => {
     expect(url.origin).toBe("https://www.strava.com");
     expect(url.searchParams.get("client_id")).toBe("12345");
     expect(url.searchParams.get("response_type")).toBe("code");
-    expect(url.searchParams.get("scope")).toBe("activity:read_all");
+    expect(url.searchParams.get("scope")).toBe("activity:read,activity:read_all");
     expect(url.searchParams.get("state")).toBe("signed-state");
   });
 
@@ -85,8 +86,15 @@ describe("Strava auth helpers", () => {
   });
 
   it("rejects missing required Strava scopes", () => {
+    expect(normalizeStravaScopes("activity:read_all,activity:read_all")).toEqual([
+      "activity:read_all",
+    ]);
     expect(hasRequiredStravaScopes("read")).toBe(false);
+    expect(hasRequiredStravaScopes("activity:read")).toBe(false);
     expect(hasRequiredStravaScopes("activity:read_all")).toBe(true);
+    expect(hasRequiredStravaScopes("activity:read,activity:read_all")).toBe(
+      true,
+    );
   });
 
   it("encrypts and decrypts Strava tokens without exposing plaintext at rest", () => {

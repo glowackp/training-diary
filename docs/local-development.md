@@ -57,6 +57,7 @@ npm run dev
 - `STORAGE_DRIVER=local` keeps uploads on the local filesystem during development.
 - `STRAVA_CLIENT_ID`, `STRAVA_CLIENT_SECRET`, and `STRAVA_ENCRYPTION_KEY` can stay empty until Strava auth is needed.
 - Once you enable Strava auth locally, all three must be set together and `STRAVA_ENCRYPTION_KEY` must be at least 32 characters long.
+- The current minimal Strava scope request is `activity:read,activity:read_all`.
 - `APP_BASE_URL` must match the callback domain configured for your Strava application, for example `http://localhost:3000`.
 - Azure-specific infrastructure is intentionally out of scope for the local runtime.
 - The health endpoint stays lightweight on purpose, is not a required database ping, and does not expose Strava readiness details.
@@ -66,4 +67,5 @@ npm run dev
 2. Set `STRAVA_CLIENT_ID`, `STRAVA_CLIENT_SECRET`, and `STRAVA_ENCRYPTION_KEY` in `.env.local`.
 3. Keep `owner_id` local-first by using the built-in `local-default` owner flow.
 4. Start the app and open `/api/strava/connect` to begin the browser redirect flow.
-5. Use `/api/strava/status` to confirm only high-level readiness and connection state.
+5. Use `/api/strava/status` to confirm only high-level readiness, connection state, and activity-read readiness.
+6. Use `/api/strava/probe` to verify the first authenticated Strava read path without starting sync.

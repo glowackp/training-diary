@@ -2,11 +2,16 @@ import { db } from "@/lib/db/client";
 import {
   getActiveStravaConnectionByOwnerId,
   getStravaConnectionByAthleteId,
+  type StravaConnectionRecord,
 } from "@/lib/db/queries/strava-connections";
 import { scopeToOwnedRecord, withDatabaseTransaction } from "@/lib/db/queries/shared";
 import { stravaConnections } from "@/lib/db/schema";
 import { encryptStravaSecret } from "@/lib/strava/secrets";
-import type { StravaTokenExchangeResponse } from "@/lib/strava/types";
+import { normalizeStravaScopes } from "@/lib/strava/oauth";
+import type {
+  StravaTokenExchangeResponse,
+  StravaTokenRefreshResponse,
+} from "@/lib/strava/types";
 import type { OwnerId } from "@/types/owner";
 
 export type PersistStravaConnectionResult =
@@ -28,6 +33,23 @@ function normalizeAthleteDisplayName(
   return parts.length > 0 ? parts.join(" ") : athlete.username ?? null;
 }
 
+function buildEncryptedTokenState(
+  tokenResponse: Pick<
+    StravaTokenExchangeResponse | StravaTokenRefreshResponse,
+    "access_token" | "refresh_token" | "expires_at"
+  >,
+) {
+  const encryptedAccessToken = encryptStravaSecret(tokenResponse.access_token);
+  const encryptedRefreshToken = encryptStravaSecret(tokenResponse.refresh_token);
+
+  return {
+    encryptedAccessToken: encryptedAccessToken.encryptedValue,
+    encryptedRefreshToken: encryptedRefreshToken.encryptedValue,
+    tokenEncryptionKeyVersion: encryptedRefreshToken.keyVersion,
+    accessTokenExpiresAt: new Date(tokenResponse.expires_at * 1000),
+  } as const;
+}
+
 /** Persists the active Strava connection while preserving the single-owner and single-athlete locks. */
 export async function persistStravaConnection({
   ownerId,
@@ -38,12 +60,8 @@ export async function persistStravaConnection({
   acceptedScope: string;
   tokenResponse: StravaTokenExchangeResponse;
 }): Promise<PersistStravaConnectionResult> {
-  const acceptedScopes = acceptedScope
-    .split(",")
-    .map((value) => value.trim())
-    .filter(Boolean);
-  const encryptedAccessToken = encryptStravaSecret(tokenResponse.access_token);
-  const encryptedRefreshToken = encryptStravaSecret(tokenResponse.refresh_token);
+  const acceptedScopes = normalizeStravaScopes(acceptedScope);
+  const encryptedTokenState = buildEncryptedTokenState(tokenResponse);
 
   return withDatabaseTransaction(async (tx) => {
     const queryExecutor = tx as DatabaseReader;
@@ -88,10 +106,7 @@ export async function persistStravaConnection({
       athleteUsername: tokenResponse.athlete.username ?? null,
       athleteDisplayName: normalizeAthleteDisplayName(tokenResponse.athlete),
       scopes: acceptedScopes,
-      encryptedAccessToken: encryptedAccessToken.encryptedValue,
-      encryptedRefreshToken: encryptedRefreshToken.encryptedValue,
-      tokenEncryptionKeyVersion: encryptedRefreshToken.keyVersion,
-      accessTokenExpiresAt: new Date(tokenResponse.expires_at * 1000),
+      ...encryptedTokenState,
       isActive: true,
       revokedAt: null,
       updatedAt: new Date(),
@@ -119,4 +134,19 @@ export async function persistStravaConnection({
       action: "created",
     };
   });
+}
+
+/** Stores the latest encrypted access and refresh token state after a server-side refresh cycle. */
+export async function persistRefreshedStravaTokens(
+  connection: Pick<StravaConnectionRecord, "id" | "ownerId">,
+  tokenResponse: StravaTokenRefreshResponse,
+) {
+  await db
+    .update(stravaConnections)
+    .set({
+      ...buildEncryptedTokenState(tokenResponse),
+      revokedAt: null,
+      updatedAt: new Date(),
+    })
+    .where(scopeToOwnedRecord(stravaConnections, connection));
 }

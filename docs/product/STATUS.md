@@ -1,15 +1,15 @@
 # Project Status
 
 ## Current Phase
-Phase 2 / Task 4 completed
+Phase 2 / Task 5 completed
 
 ## Last Completed
-- Phase 2 / Task 4 completed
-- Strava connect endpoint implemented
-- Strava callback endpoint implemented with state validation and server-side code exchange
-- Strava status endpoint completed with high-level readiness/connection state only
-- Encrypted token persistence and athlete lock added for the `local-default` owner flow
-- Strava auth env validation tightened so auth fails closed without `STRAVA_ENCRYPTION_KEY`
+- Phase 2 / Task 5 completed
+- Server-side Strava token refresh helper/service implemented
+- Stored Strava connections now persist the newest encrypted refresh/access token state after refresh
+- First authenticated Strava read path added through a minimal probe endpoint
+- Accepted Strava scopes are now normalized, validated, persisted, and checked before reads
+- Strava status endpoint now reports activity-read readiness without exposing sensitive internals
 
 ## Current Branch
 - main
@@ -43,14 +43,14 @@ Phase 2 / Task 4 completed
 - Health and status routes must not expose secrets, athlete ids, token presence, or raw env values
 
 ## Next Exact Step
-Execute Phase 2 / Task 5:
-- add token refresh support on top of the encrypted Strava connection records
-- confirm the next scope set needed before starting authenticated athlete or activity reads
-- keep webhook flow and activity sync out of scope until the next slice is explicitly requested
+Execute Phase 2 / Task 6:
+- implement Strava webhook verification and event persistence
+- add owner-scoped incremental activity refresh for new or updated Strava activities
+- keep full sync expansion and streams out of scope unless explicitly requested
 
 ## Open Questions
-- confirm whether Task 5 should stay limited to token refresh and auth hardening, or begin the first authenticated read from Strava
-- confirm whether `activity:read_all` remains the desired minimum scope set or if a broader profile scope is needed next
+- confirm whether Task 6 should directly upsert activities from webhook-triggered refreshes or persist-and-process in a separate background step
+- confirm whether incremental sync should still exclude activity streams in the Task 6 slice
 
 ## Blockers
 - none
