@@ -2,8 +2,12 @@
 
 Current version: `0.1.0-dev`
 
+The canonical app version is stored in `package.json` and displayed in the app shell.
+
 ## Current status
-Bootstrap / planning stage.
+Phase 0 skeleton complete. The app now has a local-first Next.js foundation,
+placeholder dashboard routes, placeholder API surfaces, Docker Compose for
+PostgreSQL, and baseline testing/tooling.
 
 ## What the app does
 - recent training feed
@@ -18,9 +22,17 @@ Bootstrap / planning stage.
 ## Local setup
 See `docs/local-development.md`.
 
+The local runtime does not require Azure. Development uses:
+- Next.js with the `src/` app router layout
+- PostgreSQL via Docker Compose
+- local filesystem storage for uploads
+- server-only Strava placeholder routes
+
 ## Key commands
 - `npm install`
 - `npm run dev`
+- `npm run lint`
+- `npm run typecheck`
 - `npm run test`
 - `npm run test:e2e`
 - `npm run db:generate`
@@ -29,7 +41,6 @@ See `docs/local-development.md`.
 ## Environment overview
 - `DATABASE_URL`
 - `APP_BASE_URL`
-- `APP_VERSION`
 - `STORAGE_DRIVER`
 - `LOCAL_UPLOAD_DIR`
 - `STRAVA_CLIENT_ID`
@@ -38,9 +49,10 @@ See `docs/local-development.md`.
 - `STRAVA_ENCRYPTION_KEY`
 
 ## Latest notable changes
-- Initial planning and repository governance established.
-- Azure first deployment direction selected for later infrastructure work.
-- Strava chosen as primary ingestion source.
+- Added the initial Next.js 15 project skeleton under `src/`.
+- Added placeholder pages for dashboard, calendar, activity detail, and settings.
+- Added placeholder API routes for health, Strava, uploads, activities, and stats.
+- Added local development scaffolding for Docker Compose PostgreSQL, Drizzle, Vitest, and Playwright.
 
 ## Full change history
 See `CHANGELOG.md`.

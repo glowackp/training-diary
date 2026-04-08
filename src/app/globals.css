@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+:root {
+  --color-surface: #f4f2eb;
+  --color-surface-strong: #fdfbf7;
+  --color-panel: rgba(255, 255, 255, 0.74);
+  --color-panel-strong: rgba(255, 255, 255, 0.9);
+  --color-border: rgba(22, 32, 42, 0.12);
+  --color-ink: #1d2b34;
+  --color-muted: #5a6872;
+  --color-accent: #0f766e;
+  --color-accent-soft: rgba(15, 118, 110, 0.12);
+}
+
+@theme inline {
+  --color-background: var(--color-surface);
+  --color-foreground: var(--color-ink);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(15, 118, 110, 0.18), transparent 28%),
+    radial-gradient(circle at top right, rgba(14, 116, 144, 0.14), transparent 24%),
+    linear-gradient(180deg, #f8f6ef 0%, #f2efe6 100%);
+  color: var(--color-ink);
+  font-family: var(--font-geist-sans), sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: rgba(15, 118, 110, 0.18);
+}
+
+.app-shell {
+  position: relative;
+}
+
+.app-shell::before {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+  background-size: 36px 36px;
+  content: "";
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.28), transparent 75%);
+  pointer-events: none;
+}

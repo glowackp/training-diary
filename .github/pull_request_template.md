@@ -1,28 +1,19 @@
 ## Summary
-- 
+- What changed?
 
-## Why this change
-- 
+## Why
+- Why was this change needed?
 
-## How it was tested
-- [ ] lint
-- [ ] typecheck
-- [ ] unit/integration tests
-- [ ] e2e tests
-- [ ] manual test
+## Testing
+- [ ] `npm run lint`
+- [ ] `npm run typecheck`
+- [ ] Relevant automated tests
 
-## Screenshots / notes
-- 
+## Behavior, contracts, and docs
+- [ ] Schema changes called out
+- [ ] Env var changes called out
+- [ ] API or user-visible behavior changes called out
+- [ ] `README.md` and/or `CHANGELOG.md` updated when required
 
-## Schema / env / API changes
-- [ ] No
-- [ ] Yes (describe below)
-
-## Follow-up items
-- 
-
-## Documentation and versioning checklist
-- [ ] README updated if needed
-- [ ] CHANGELOG updated if needed
-- [ ] App version updated if needed
-- [ ] Critical logic is commented
+## Follow-up
+- Any follow-up work?
