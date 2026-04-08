@@ -5,10 +5,11 @@ Current version: `0.1.0-dev`
 The canonical app version is stored in `package.json` and displayed in the app shell.
 
 ## Current status
-Phase 2 / Task 5 is complete. The app now has the first secure Strava read
-slice in place on top of the auth foundation: server-side token refresh,
-accepted-scope validation, a minimal authenticated Strava probe route, and
-encrypted token persistence for the locked `local-default` owner.
+Phase 2 / Task 6 foundation is complete. The app now has Strava auth and token
+refresh, a minimal authenticated read probe, and the first webhook foundation:
+subscription verification, event persistence for traceability, owner-safe
+mapping to the locked `local-default` flow, and pending webhook events ready
+for a future incremental upsert worker.
 
 ## What the app does
 - recent training feed
@@ -27,7 +28,7 @@ The local runtime does not require Azure. Development uses:
 - Next.js with the `src/` app router layout
 - PostgreSQL via Docker Compose
 - local filesystem storage for uploads
-- server-only Strava auth routes
+- server-only Strava auth and webhook routes
 
 ## Key commands
 - `npm install`
@@ -58,7 +59,8 @@ storage under `LOCAL_UPLOAD_DIR`. Local bootstrap uses the fixed demo owner
 `STRAVA_ENCRYPTION_KEY` is mandatory for Strava auth readiness and must be set
 before `/api/strava/connect` can succeed. The current minimal Strava scope set
 is `activity:read,activity:read_all`, and `/api/strava/probe` can be used after
-connect to verify the first authenticated read path.
+connect to verify the first authenticated read path. `STRAVA_WEBHOOK_VERIFY_TOKEN`
+is used for Strava webhook subscription verification when webhook testing is enabled.
 
 ## Latest notable changes
 - Added the initial Next.js 15 project skeleton under `src/`.
@@ -73,6 +75,7 @@ connect to verify the first authenticated read path.
 - Expanded local development docs and lightweight health output to make local setup clearer without turning health into a mandatory DB ping.
 - Added the first Strava authentication slice with secure connect/callback/status routes, encrypted token persistence, athlete locking, and signed OAuth state validation.
 - Added server-side Strava token refresh support plus a minimal authenticated probe endpoint that verifies stored connections can read activities without starting sync.
+- Added the first Strava webhook foundation with verification, owner-mapped event persistence, and pending event recording for future incremental sync work.
 
 ## Full change history
 See `CHANGELOG.md`.

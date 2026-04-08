@@ -20,6 +20,8 @@ All notable changes to this project should be documented in this file.
 - Unit coverage for Strava auth env rules, OAuth state validation, scope checks, and token encryption.
 - Server-side Strava token refresh support and a minimal authenticated probe endpoint for the first post-connect read.
 - Unit coverage for token refresh request building, early-refresh timing, and the recent-activities probe reader.
+- Strava webhook verification and ingestion foundation with persisted event traceability and pending event recording for future incremental refresh work.
+- Unit coverage for webhook verification and event classification helpers.
 
 ### Changed
 - README now reflects the runnable local-first project skeleton.
@@ -29,6 +31,7 @@ All notable changes to this project should be documented in this file.
 - Local development docs now cover migrations, seeding, health verification, and the manual bootstrap path.
 - README and local-development docs now describe the Strava auth env requirements and local connect flow.
 - Strava status now reports activity-read readiness separately from connection state, and the minimal requested scope set is now `activity:read,activity:read_all`.
+- README and local-development docs now describe the webhook verification token and local webhook foundation path.
 
 ### Fixed
 - Tightened Strava credential validation so partial OAuth config is rejected before runtime use.
@@ -36,8 +39,10 @@ All notable changes to this project should be documented in this file.
 - Strava auth now fails closed unless `STRAVA_ENCRYPTION_KEY` is configured, and health/status routes no longer expose internal readiness details beyond high-level state.
 - The first authenticated Strava read now retries once with a server-side token refresh before surfacing reconnect or upstream failure states.
 - The Strava probe route now returns only high-level success/count data instead of recent activity details.
+- Unsupported or incomplete but parseable Strava webhook events are now stored as ignored trace records instead of failing the route.
 
 ### Security
 - Repository helpers now encode owner-scoped filters so future child-record reads and writes are harder to implement incorrectly.
 - Strava OAuth state is now signed and bound to an httpOnly cookie, and access/refresh tokens are encrypted before persistence.
 - Accepted Strava scopes are normalized and persisted, and probe/status routes avoid exposing secrets, athlete ids, or token values.
+- Webhook routes now verify the Strava subscription token, acknowledge deliveries without exposing owner mapping details, and scope mapped writes through the active Strava connection.

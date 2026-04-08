@@ -58,6 +58,7 @@ npm run dev
 - `STRAVA_CLIENT_ID`, `STRAVA_CLIENT_SECRET`, and `STRAVA_ENCRYPTION_KEY` can stay empty until Strava auth is needed.
 - Once you enable Strava auth locally, all three must be set together and `STRAVA_ENCRYPTION_KEY` must be at least 32 characters long.
 - The current minimal Strava scope request is `activity:read,activity:read_all`.
+- `STRAVA_WEBHOOK_VERIFY_TOKEN` can stay empty until you enable Strava webhook verification locally.
 - `APP_BASE_URL` must match the callback domain configured for your Strava application, for example `http://localhost:3000`.
 - Azure-specific infrastructure is intentionally out of scope for the local runtime.
 - The health endpoint stays lightweight on purpose, is not a required database ping, and does not expose Strava readiness details.
@@ -69,3 +70,9 @@ npm run dev
 4. Start the app and open `/api/strava/connect` to begin the browser redirect flow.
 5. Use `/api/strava/status` to confirm only high-level readiness, connection state, and activity-read readiness.
 6. Use `/api/strava/probe` to verify the first authenticated Strava read path without starting sync.
+
+## Local Strava webhook setup
+1. Set `STRAVA_WEBHOOK_VERIFY_TOKEN` in `.env.local`.
+2. Expose `/api/strava/webhook` through a public tunnel when testing against live Strava webhooks locally.
+3. Use the same verify token value when registering the Strava webhook subscription.
+4. The webhook route will persist supported deliveries and mark future incremental refresh work as pending without starting activity upserts yet.

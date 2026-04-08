@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import { stravaConnections } from "@/lib/db/schema";
 import type { OwnerId } from "@/types/owner";
@@ -37,6 +37,25 @@ export async function getStravaConnectionByAthleteId(
     .select()
     .from(stravaConnections)
     .where(eq(stravaConnections.stravaAthleteId, athleteId))
+    .limit(1);
+
+  return stravaConnection ?? null;
+}
+
+/** Resolves only active Strava connections by athlete id so webhook routing cannot revive inactive ownership state. */
+export async function getActiveStravaConnectionByAthleteId(
+  athleteId: number,
+  executor: ReadExecutor = db,
+): Promise<StravaConnectionRecord | null> {
+  const [stravaConnection] = await executor
+    .select()
+    .from(stravaConnections)
+    .where(
+      and(
+        eq(stravaConnections.stravaAthleteId, athleteId),
+        eq(stravaConnections.isActive, true),
+      ),
+    )
     .limit(1);
 
   return stravaConnection ?? null;
