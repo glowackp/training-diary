@@ -5,10 +5,11 @@ Current version: `0.1.0-dev`
 The canonical app version is stored in `package.json` and displayed in the app shell.
 
 ## Current status
-Phase 1 / Task 3 is complete. The app now has validated server config, a typed
-repository foundation for owner-scoped data access, local demo seeding for the
-locked `local-default` owner, and a clearer local bootstrap workflow that keeps
-Azure optional.
+Phase 2 / Task 4 is the current focus. Phase 1 / Task 3 is complete, so the
+app now has validated server config, a typed repository foundation for
+owner-scoped data access, local demo seeding for the locked `local-default`
+owner, and a clearer local bootstrap workflow that keeps Azure optional while
+Strava auth/connect/callback/status work begins next.
 
 ## What the app does
 - recent training feed

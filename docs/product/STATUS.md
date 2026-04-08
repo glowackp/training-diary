@@ -1,22 +1,10 @@
 # Project Status
 
 ## Current Phase
-Phase 1 / Task 3 completed
+Phase 2 / Task 4
 
 ## Last Completed
-- Phase 0 / Task 0 completed
-- Phase 1 / Task 1 completed
-- Phase 1 / Task 2 completed
 - Phase 1 / Task 3 completed
-- Initial database schema and migrations added
-- Security review completed
-- Dedupe/idempotency integrity tightened for source-linked records
-- `token_encryption_key_version` added for Strava token rotation safety
-- server env validation and normalized config layer added
-- owner-scoped repository helpers and typed activity domain mapping added
-- local storage adapter now persists owner-scoped relative storage keys
-- local demo seed script added for owner `local-default`
-- local docs and workflow updated around `db:migrate`, `db:seed`, `db:setup`, and lightweight health verification
 
 ## Current Branch
 - main
@@ -48,10 +36,7 @@ Phase 1 / Task 3 completed
 - For webhook flows, resolve owner only from Strava connection or athlete mapping
 
 ## Next Exact Step
-Execute Phase 2 / Task 4:
-- begin Strava auth foundation work
-- keep token exchange and refresh strictly server-side
-- build on the existing token storage, dedupe rules, and owner-boundary helpers
+implement Strava auth/connect/callback/status
 
 ## Open Questions
 - none blocking Phase 2 / Task 4
