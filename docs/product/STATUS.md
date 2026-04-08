@@ -33,6 +33,8 @@ Phase 1 / Task 2 completed
 - one personal comment per activity
 - activity_streams stored as jsonb by (activity_id, stream_type)
 - strict dedupe for uploads and source activity ids
+- seed owner id locked to local-default
+- health endpoint stays lightweight for now
 
 ## Application Safety Rules
 - Never accept owner_id from the client for child records
