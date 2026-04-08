@@ -4,8 +4,8 @@ import {
   getActiveStravaConnectionByAthleteId,
   type StravaConnectionRecord,
 } from "@/lib/db/queries/strava-connections";
-import { scopeToOwnedRecord, withDatabaseTransaction } from "@/lib/db/queries/shared";
-import { stravaConnections, stravaWebhookEvents } from "@/lib/db/schema";
+import { withDatabaseTransaction } from "@/lib/db/queries/shared";
+import { stravaWebhookEvents } from "@/lib/db/schema";
 import type { OwnerId } from "@/types/owner";
 
 const stravaWebhookVerificationQuerySchema = z.object({
@@ -217,17 +217,6 @@ export async function ingestStravaWebhookEvent(
         ok: true,
         state: "duplicate",
       } as const;
-    }
-
-    if (connection) {
-      // Keep the owner-bound connection row aware of the newest mapped webhook without trusting client-supplied owner ids.
-      await tx
-        .update(stravaConnections)
-        .set({
-          lastWebhookEventAt: new Date(),
-          updatedAt: new Date(),
-        })
-        .where(scopeToOwnedRecord(stravaConnections, connection));
     }
 
     return {

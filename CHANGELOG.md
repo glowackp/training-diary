@@ -41,6 +41,7 @@ All notable changes to this project should be documented in this file.
 - The Strava probe route now returns only high-level success/count data instead of recent activity details.
 - Unsupported or incomplete but parseable Strava webhook events are now stored as ignored trace records instead of failing the route.
 - Unsupported but still-structured Strava webhook event types now stay traceable as ignored records instead of being dropped at validation time.
+- Webhook ingestion no longer updates Strava connection metadata directly from unauthenticated delivery payloads.
 
 ### Security
 - Repository helpers now encode owner-scoped filters so future child-record reads and writes are harder to implement incorrectly.
